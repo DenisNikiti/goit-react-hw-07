@@ -1,19 +1,21 @@
 import Contact from "../Contact/Contact";
-import { useSelector } from "react-redux";
-import { contactsSelector } from "../../redux/contactsSlice";
-import { filterSelector } from "../../redux/filtersSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { selectVisibleContacts } from "../../redux/contactsSlice";
+
+import { useEffect } from "react";
+import { fetchContacts } from "../../redux/contactsOps";
 
 export default function ContactList() {
-  const contacts = useSelector(contactsSelector);
-  const filter = useSelector(filterSelector);
+  const dispath = useDispatch();
+  const contacts = useSelector(selectVisibleContacts);
 
-  const visibleContacts = contacts.filter((contact) =>
-    contact.name.toLowerCase().includes(filter.toLowerCase())
-  );
+  useEffect(() => {
+    dispath(fetchContacts());
+  }, [dispath]);
 
   return (
     <ul>
-      {visibleContacts.map((contact) => {
+      {contacts.map((contact) => {
         return <Contact key={contact.id} contact={contact} />;
       })}
     </ul>
